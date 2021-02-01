@@ -1,0 +1,43 @@
+name: build
+on:
+  push:
+    branches:
+      - deploy-script
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux
+    steps:
+      - name: Get date
+        id: date
+        run: echo "::set-output name=date::$(date +%F)"
+
+      - name: Cache
+        uses: actions/cache@v1
+        with:
+          path: /var/cache/pacman/pkg
+          key: arch-pkgs-${{ steps.date.outputs.date }}
+          restore-keys: arch-pkgs
+
+      - name: Update system and install dependencies
+        run: pacman -Syu --noconfirm --noprogressbar --needed base-devel bash curl git unzip git rsync
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get pack
+        run: bash cmsis-deploy.sh
+
+      - name: Get version
+        id: version
+        run: echo "::set-output name=version::v$(cat cmsis_build/version)"
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BRANCH: cmsis
+          FOLDER: cmsis_deploy
+          COMMIT_MESSAGE: ${{ steps.version.outputs.version }}
