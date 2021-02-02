@@ -2,9 +2,9 @@
 
 name=cmsis-dfp-stm32f1
 vendor=Atmel
-version=4.3.1
+version=4.3.2
 source_url=https://github.com/STMicroelectronics/cmsis_device_f1
-commit=2948138428461c0621fd53b269862c6e6bb043ce
+commit=6601104a6397299b7304fd5bcd9a491f56cb23a6
 
 build_dir='cmsis_build'
 deploy_dir='cmsis_deploy'
